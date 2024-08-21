@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, FlatList } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import EmailInput from '../../components/EmailInput/index';
 import SendButton from '../../components/SendButton/index';
 import EmailList from '../../components/EmailList/index';
@@ -17,11 +17,18 @@ const HomeScreen = () => {
 
   const sendEmail = async () => {
     try {
+      console.log('Request body:', {
+        to: toEmail,
+        subject: subject,
+        message: message,
+      });
+
       const newEmail = await api.sendEmail(toEmail, subject, message);
       setToEmail('');
       setSubject('');
       setMessage('');
       setSentEmails([...sentEmails, newEmail]);
+      console.log('email body',newEmail);
     } catch (error) {
       console.error('Error sending email:', error);
     }

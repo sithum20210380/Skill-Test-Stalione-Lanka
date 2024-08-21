@@ -1,24 +1,30 @@
-const { Sequelize, DataTypes, Model } = require('sequelize');
-const sequelize = new Sequelize('sqlite::memory:');
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database('emails.db');
 
-class Email extends Model {}
+exports.createEmail = (to, subject, message) => {
+  return new Promise((resolve, reject) => {
+    db.run(
+      'INSERT INTO emails (to_email, subject, message) VALUES (?, ?, ?)',
+      [to, subject, message],
+      (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({ id: this.lastID, to, subject, message });
+        }
+      }
+    );
+  });
+};
 
-Email.init({
-  to: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  subject: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  message: {
-    type: DataTypes.TEXT,
-    allowNull: false,
-  },
-}, {
-  sequelize,
-  modelName: 'Email',
-});
-
-module.exports = Email;
+exports.getAllEmails = () => {
+  return new Promise((resolve, reject) => {
+    db.all('SELECT * FROM emails', (err, rows) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+};
