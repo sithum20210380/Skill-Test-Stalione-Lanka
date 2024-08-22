@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import EmailInput from '../../components/EmailInput/index';
 import SendButton from '../../components/SendButton/index';
 import EmailList from '../../components/EmailList/index';
@@ -12,39 +12,36 @@ const HomeScreen = () => {
   const [sentEmails, setSentEmails] = useState([]);
 
   useEffect(() => {
+    const fetchSentEmails = async () => {
+      try {
+        const emails = await api.fetchSentEmails();
+        console.log('emails', emails);
+        setSentEmails(emails);
+      } catch (error) {
+        console.error('Error fetching sent emails:', error);
+      }
+    }
     fetchSentEmails();
   }, []);
 
   const sendEmail = async () => {
     try {
-      console.log('Request body:', {
-        to: toEmail,
-        subject: subject,
-        message: message,
-      });
+      console.log('Request body:', { to: toEmail, subject, message });
 
       const newEmail = await api.sendEmail(toEmail, subject, message);
       setToEmail('');
       setSubject('');
       setMessage('');
       setSentEmails([...sentEmails, newEmail]);
-      console.log('email body',newEmail);
+      console.log('email body', newEmail);
     } catch (error) {
       console.error('Error sending email:', error);
     }
   };
 
-  const fetchSentEmails = async () => {
-    try {
-      const emails = await api.fetchSentEmails();
-      setSentEmails(emails);
-    } catch (error) {
-      console.error('Error fetching sent emails:', error);
-    }
-  };
-
   return (
     <View style={styles.container}>
+      <Text>Simple mailclient APP</Text>
       <EmailInput
         toEmail={toEmail}
         setToEmail={setToEmail}

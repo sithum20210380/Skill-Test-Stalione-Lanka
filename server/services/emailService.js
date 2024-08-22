@@ -6,22 +6,20 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false,
   auth: {
-    user: 'sithum18raveesha@gmail.com',
-    pass: 'qxcpoyyvhhnfsmib',
+    user: '',
+    pass: '',
   },
 });
 
 exports.sendEmail = async (to, subject, message) => {
   try {
-    // Send the email using SMTP
     await transporter.sendMail({
-      from: 'sithum18raveesha@gmail.com',
+      from: '',
       to,
       subject,
       text: message,
     });
 
-    // Store the sent email in the database
     const email = await Email.create({ to, subject, message });
     return email;
   } catch (error) {
